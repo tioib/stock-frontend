@@ -1,11 +1,34 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '../views/HomeView.vue';
+import ListarEquipos from '../views/ListarEquipos.vue';
+import AgregarEquipos from '../views/AgregarEquipos.vue';
+import ClasifView from '@/views/ClasifView';
+
 
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: HomeView,
+    name: 'equipo',
+    component: ListarEquipos,
+  },
+  {
+    path: '/a',
+    name: 'agregar',
+    component: AgregarEquipos,
+  },
+  {
+    path: '/c',
+    name: 'categoria',
+    component: ClasifView,
+  },
+  {
+    path: '/e',
+    name: 'estado',
+    component: ClasifView,
+  },
+  {
+    path: '/m',
+    name: 'modelo',
+    component: ClasifView,
   },
   {
     path: '/about',
