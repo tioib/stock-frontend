@@ -31,10 +31,7 @@
     mounted()
     {
       if(this.title)
-      {
         this.sorted = this.$refs.itemsH[0].innerText;
-        console.log(this.sorted)
-      }
     },
     methods:
     {

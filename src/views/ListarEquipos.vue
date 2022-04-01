@@ -218,10 +218,6 @@
           .get("http://192.168.88.246:80/stockapip/filter.php?sort="+this.sorted+this.sorting())
           .then(response => {
             this.data = response.data;
-            Object.keys(this.data).forEach(key =>
-            {
-              if(this.data[key].id == null) delete this.data[key];
-            });
           })
           .catch(e => this.info = e);
       },
@@ -241,11 +237,9 @@
       },
       editar()
       {
-        console.log("http://192.168.88.246:80/stockapip/update.php?id="+this.single.id+"&categoria="+this.single.id_categoria+"&modelo="+this.single.id_modelo+"&estado="+this.single.id_estado+"&serial="+this.single.serial+this.single.abonado+this.single.mac+this.single.info+"&cual=equipo");
         this.single.abonado = this.single.abonado != null ? "&abonado="+this.single.abonado : '';
         this.single.mac = this.single.mac != null ? "&mac="+this.single.mac : '';
         this.single.info = this.single.info != null ? "&info="+this.single.info : '';
-        console.log("http://192.168.88.246:80/stockapip/update.php?id="+this.single.id+"&categoria="+this.single.id_categoria+"&modelo="+this.single.id_modelo+"&estado="+this.single.id_estado+"&serial="+this.single.serial+this.single.abonado+this.single.mac+this.single.info+"&cual=equipo");
         this.axios
           .get("http://192.168.88.246:80/stockapip/update.php?id="+this.single.id+"&categoria="+this.single.id_categoria+"&modelo="+this.single.id_modelo+"&estado="+this.single.id_estado+"&serial="+this.single.serial+this.single.abonado+this.single.mac+this.single.info+"&cual=equipo")
           .then(response => {
@@ -305,7 +299,7 @@
             {
               if(this.single[key] != null)
               {
-                console.log(this.single[key] = this.single[key].trim())
+                this.single[key] = this.single[key].trim();
               }
             });
           })
@@ -328,11 +322,6 @@
           .then(response => {
             this.data = response.data;
             this.status = response.status;
-            console.log(this.data);
-            Object.keys(this.data).forEach(key =>
-            {
-              if(this.data[key].id == null) delete this.data[key];
-            });
           })
           .catch(e => this.info = e);
       },
@@ -377,10 +366,6 @@
           .then(response =>
           {
             this.data = response.data;
-            Object.keys(this.data).forEach(key =>
-            {
-              if(this.data[key].id == null) delete this.data[key];
-            });
           });
       }
     },

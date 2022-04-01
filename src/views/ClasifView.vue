@@ -120,7 +120,6 @@
       },
     mounted()
     {
-      console.log(this.$refs)
       this.changeTitle();
       this.fetch();
     },
