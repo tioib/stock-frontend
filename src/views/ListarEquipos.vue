@@ -116,12 +116,10 @@
     {
       prefiltro(check)
       {
-        console.log("check = "+check);
         this.check = check;
       },
       filtrar()
       {
-        console.log("filtrar");
         if(this.check) this.filter()
       },
       assingle(item,component)

@@ -32,28 +32,38 @@
       agregarClas()
       {
         this.axios
-          .get("http://192.168.88.246:80/stockapip/create.php?descripcion="+this.item+"&cual="+this.$route.name)
+          .get("http://localhost:80/stockapip/create.php?descripcion="+this.item+"&cual="+this.$route.name)
           .then(response => {
             console.log(response);
-            this.single = response.data;
-            console.log(this.single)
           })
           .catch(e => this.info = e);
       },
       eliminar()
       {
-        console.log(this.index);
         this.axios
-          .get("http://192.168.88.246:80/stockapip/delete.php?id="+this.index+"&cual="+this.$route.name)
-          .then(response => {
-            this.single = response.data;
+          .get("http://localhost:80/stockapip/find.php?cual="+this.$route.name+"&id="+this.index)
+          .then(response =>
+          {
+            let flag;
+            if(response.data == "0") flag = true;
+            else flag = window.confirm("Se encontraron "+response.data+" equipo/s registrado/s con el elemento seleccionado, ¿desea borrarlo/s?");
+            if(flag)
+            {
+              console.log(this.index);
+              this.axios
+                .get("http://localhost:80/stockapip/delete.php?id="+this.index+"&cual="+this.$route.name)
+                .then(() => {
+                  location.reload();
+                })
+                .catch(e => this.info = e);
+            }
           })
           .catch(e => this.info = e);
       },
       editarClas()
       {
         this.axios
-          .get("http://192.168.88.246:80/stockapip/update.php?id="+this.index+"&descripcion="+this.item+"&cual="+this.$route.name)
+          .get("http://localhost:80/stockapip/update.php?id="+this.index+"&descripcion="+this.item+"&cual="+this.$route.name)
           .then(response => {
             this.single = response.data;
           })

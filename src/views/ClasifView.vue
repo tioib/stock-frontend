@@ -6,7 +6,7 @@
         <span class="modal__title">ID: {{single.id}}</span>
       </div>
       <hr>
-      <form>
+      <div>
         <FormItem ref="modal" title="Descripción" type="text" :index="single.id" :item="single.descripcion" />
         <div class="buttoncontain">
           <div style="flex-direction: row">
@@ -14,7 +14,7 @@
             <button @click="elim" style="background-color: red; color: white">Eliminar</button>
           </div>
         </div>
-      </form>
+      </div>
     </div>
   </vue-final-modal>
 
@@ -69,7 +69,7 @@
         {
           let opcion = 0;
           opcion = item === "ID" ? direction ? 0 : 1 : direction ? 2 : 3;
-          this.axios.get("http://192.168.88.246:80/stockapip/sort.php?cual="+opcion+"&dir="+this.$route.name)
+          this.axios.get("http://localhost:80/stockapip/sort.php?cual="+opcion+"&dir="+this.$route.name)
             .then(response => console.log(this.data = response.data));
         },
         changeTitle()
@@ -86,7 +86,7 @@
         show(key)
         {
           this.axios
-            .get("http://192.168.88.246:80/stockapip/showsingle.php?id="+key+"&cual="+this.$route.name)
+            .get("http://localhost:80/stockapip/showsingle.php?id="+key+"&cual="+this.$route.name)
             .then(response => {
               this.single = response.data;
               this.status = response.status;
@@ -97,6 +97,7 @@
         elim()
         {
           this.$refs.modal.eliminar();
+          this.showModal = false;
         },
         agregar()
         {
@@ -109,7 +110,7 @@
         fetch()
         {
           this.axios
-            .get("http://192.168.88.246:80/stockapip/show.php?cual="+this.$route.name)
+            .get("http://localhost:80/stockapip/show.php?cual="+this.$route.name)
             .then(response =>
             {
               this.data = response.data;
