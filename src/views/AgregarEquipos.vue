@@ -2,11 +2,11 @@
   <div class="form separate">
     <h2 style="text-align: center; margin: 0">EQUIPOS: Agregar</h2>
     <div >
-      <div class="restrict" ><FormItem @agregar="assign" ref="serial" title="Número de serie *" type="text" /></div>
+      <div class="restrict" ><FormItem @focused="focus" @blured="blured" @agregar="assign" ref="serial" title="Número de serie *" type="text" /></div>
       <div class="restrict" ><FormItem @agregar="assign" ref="categoria" title="Categoría *" type="select" :select="categorias" /></div>
       <div class="restrict" ><FormItem @agregar="assign" ref="modelo" title="Modelo *" type="select"  :select="modelos"/></div>
-      <div class="restrict" ><FormItem @agregar="assign" ref="mc" title="MAC" type="text"  /></div>
-      <div class="restrict" ><FormItem @agregar="assign" ref="estado" title="Estado" type="select"  :select="estados"/></div>
+      <div class="restrict" ><FormItem @focused="focus" @blured="blured" @agregar="assign" ref="mc" title="MAC" type="text"  /></div>
+      <div class="restrict" ><FormItem @agregar="assign" ref="estado" title="Estado" item="1" type="select"  :select="estados"/></div>
       <div class="restrict" ><FormItem @agregar="assign" ref="info" title="Info adicional" type="text"  /></div>
       <div class="buttoncontain">
         <button @click="agregar">Agregar</button>
@@ -15,18 +15,24 @@
     <h3>Los primeros tres campos son obligatorios</h3>
   </div>
   <h3 ref="aviso"></h3>
+
+  <h4 style="text-align: left; margin-left: 1vw">Cámara:</h4>
+  <StreamBarcodeReader @decode="onDecode"></StreamBarcodeReader>
 </template>
 
 <script>
   import FormItem from '@/components/FormItem';
+  import { StreamBarcodeReader } from "vue-barcode-reader";
 
   export default {
-    components: {FormItem},
+    components: {FormItem,StreamBarcodeReader},
     name: 'AgregarEquipos',
     data()
     {
       return{
         title: "AGREGAR EQUIPOS",
+
+        focused: null,
 
         add:
         {
@@ -42,14 +48,22 @@
         categorias: null,
         modelos: null,
         estados: null,
-
-        categoria: {id: "0", descripcion: "Todas"},
-        estado: {id: "0", descripcion: "Todos"},
-        modelo: {id: "0", descripcion: "Todos"},
       }
     },
     methods:
     {
+      focus(ref)
+      {
+        this.focused = ref;
+      },
+      blured()
+      {
+        this.focused = null
+      },
+      onDecode(result)
+      {
+        this.focused.$refs.valor.value = result;
+      },
       assign(item,component)
       {
         switch(component)

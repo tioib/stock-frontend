@@ -13,6 +13,7 @@
     "table-sort-js": "^1.6.8",
     "vue": "^3.2.13",
     "vue-axios": "^3.4.1",
+    "vue-barcode-reader": "^1.0.2",
     "vue-final-modal": "^3.4.3",
     "vue-router": "^4.0.3"
   },

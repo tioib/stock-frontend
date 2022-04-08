@@ -1,6 +1,7 @@
 <template>
-  <label :for="'i'+index">{{title}}</label>
-  <input @keyup.enter="$emit('enter')" @focus="$emit('prefiltro',true)" @blur="$emit('prefiltro',false)" v-if="type !== 'select'" :name="'i'+index" :id="'i'+index" :type="type" v-model="item">
+  <label v-if="title.includes('*')" :for="'i'+index"><strong>{{title}}</strong></label>
+  <label v-else :for="'i'+index">{{title}}</label>
+  <input ref="valor" @keyup.enter="$emit('enter')" @focus="enfocus" @blur="enblur" v-if="type !== 'select'" :name="'i'+index" :id="'i'+index" :type="type" v-model="item">
   <select v-else :name="'i'+index" :id="'i'+index" v-model="item">
     <template v-for="value in select">
       <option v-if="item === value.id" :value="value.id">{{value.descripcion}}</option>
@@ -29,10 +30,20 @@
     },
     methods:
     {
+      enfocus()
+      {
+        if(this.$route.name == "agregar") this.$emit("focused",this);
+        else this.$emit('prefiltro',true)
+      },
+      enblur()
+      {
+        if(this.$route.name == "agregar") this.$emit("blured");
+        else this.$emit('prefiltro',false)
+      },
       agregarClas()
       {
         this.axios
-          .get("http://localhost:80/stockapip/create.php?descripcion="+this.item+"&cual="+this.$route.name)
+          .get("http://192.168.88.246:80/stockapip/create.php?descripcion="+this.item+"&cual="+this.$route.name)
           .then(response => {
             console.log(response);
           })
@@ -41,7 +52,7 @@
       eliminar()
       {
         this.axios
-          .get("http://localhost:80/stockapip/find.php?cual="+this.$route.name+"&id="+this.index)
+          .get("http://192.168.88.246:80/stockapip/find.php?cual="+this.$route.name+"&id="+this.index)
           .then(response =>
           {
             let flag;
@@ -51,7 +62,7 @@
             {
               console.log(this.index);
               this.axios
-                .get("http://localhost:80/stockapip/delete.php?id="+this.index+"&cual="+this.$route.name)
+                .get("http://192.168.88.246:80/stockapip/delete.php?id="+this.index+"&cual="+this.$route.name)
                 .then(() => {
                   location.reload();
                 })
@@ -63,7 +74,7 @@
       editarClas()
       {
         this.axios
-          .get("http://localhost:80/stockapip/update.php?id="+this.index+"&descripcion="+this.item+"&cual="+this.$route.name)
+          .get("http://192.168.88.246:80/stockapip/update.php?id="+this.index+"&descripcion="+this.item+"&cual="+this.$route.name)
           .then(response => {
             this.single = response.data;
           })
