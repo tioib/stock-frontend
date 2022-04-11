@@ -16,8 +16,8 @@
   </div>
   <h3 ref="aviso"></h3>
 
-  <h4 style="text-align: left; margin-left: 1vw">Cámara:</h4>
-  <!-- <StreamBarcodeReader @decode="onDecode"></StreamBarcodeReader> -->
+  <!-- <h4 style="text-align: left; margin-left: 1vw">Cámara:</h4>
+  <StreamBarcodeReader @decode="onDecode"></StreamBarcodeReader> -->
 </template>
 
 <script>
@@ -165,8 +165,6 @@
       this.getCat();
       this.getMod();
       this.getEst();
-
-      this.$refs.estado.$refs.select.value = 1;
     }
   };
 </script>
