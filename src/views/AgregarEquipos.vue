@@ -104,7 +104,6 @@
             {
               toadd += this.add[key];
             }
-            cont++
           }
         );
         if(!toadd.includes("&estado=")) toadd += "&estado=1";
