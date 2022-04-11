@@ -96,13 +96,12 @@
       agregar()
       {
         console.log(this.add);
-        let toadd = "", cont = 0;
+        let toadd = "";
 
         Object.keys(this.add).forEach( key =>
           {
             if(this.add[key] != null)
             {
-              if(cont === 0) this.add[key] = this.add[key].replace("&","");
               toadd += this.add[key];
             }
             cont++
