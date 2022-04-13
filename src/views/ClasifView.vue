@@ -67,8 +67,7 @@
       {
         sort(item,direction)
         {
-          let opcion = 0;
-          opcion = item === "ID" ? direction ? 0 : 1 : direction ? 2 : 3;
+          let opcion = item === "ID" ? direction ? 0 : 1 : direction ? 2 : 3;
           this.axios.get("http://192.168.88.246:80/stockapip/sort.php?cual="+opcion+"&dir="+this.$route.name)
             .then(response => console.log(this.data = response.data));
         },

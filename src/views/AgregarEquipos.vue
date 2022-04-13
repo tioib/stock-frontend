@@ -95,7 +95,6 @@
       },
       agregar()
       {
-        console.log(this.add);
         let toadd = "";
 
         Object.keys(this.add).forEach( key =>
@@ -107,12 +106,10 @@
           }
         );
         if(!toadd.includes("&estado=")) toadd += "&estado=1";
-        console.log(toadd);
 
         this.axios
           .get("http://192.168.88.246:80/stockapip/create.php?"+toadd+"&cual=equipo")
           .then(response => {
-            console.log(response);
             if(response.data === true)
             {
               this.$refs.aviso.style = "color: green";
