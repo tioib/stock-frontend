@@ -17,32 +17,33 @@
     data()
     {
       return{
-        sorted: null,
-        direction: true,
-        check: String,
+        sorted: null, //nombre de la columna ordenada
+        direction: true, //ascendente o desc
       }
     },
     props:
     {
-      id: Number,
-      items: Object,
-      title: Boolean
+      id: Number, //id del elemento
+      items: Object, //items de la fila
+      title: Boolean //si es header o fila
     },
     mounted()
     {
-      if(this.title)
+      if(this.title) //para que esté la flecha en la columna ID de la tabla al inicio
         this.sorted = this.$refs.itemsH[0].innerText;
     },
     methods:
     {
-      sort(event)
+      sort(event) //cuando se hace clic en un header se ordena esa columna
       {
+        //si se hizo clic en la columna ya ordenada se cambia de dirección
         if(event.target.innerText.includes(this.sorted)) this.direction = !this.direction;
-        else
+        else //sino se cambia la columna ordenada y la direccion es asc
         {
           this.sorted = event.target.innerText;
           this.direction = true;
         }
+        //por ultimo se emite el evento para el componente que busca los datos de la tabla
         this.$emit("sort",this.sorted,this.direction);
       }
     }

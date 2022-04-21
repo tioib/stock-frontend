@@ -30,11 +30,11 @@
     data()
     {
       return{
-        title: "AGREGAR EQUIPOS",
+        title: "AGREGAR EQUIPOS", //título de la pestaña
 
-        focused: null,
+        focused: null, //el elemento del formulario seleccionado (para el scanner)
 
-        add:
+        add: //el objeto a enviar en el llamado GET a la API
         {
           serial: null,
           categoria: null,
@@ -45,28 +45,28 @@
           info: null,
         },
 
-        categorias: null,
-        modelos: null,
-        estados: null,
+        categorias: null, //para la selección de categorías en el formulario (ver getCat() en methods)
+        modelos: null, //para la selección de modelos en el formulario (ver getMod() en methods)
+        estados: null, //para la selección de estados en el formulario (ver getEst() en methods)
       }
     },
     methods:
     {
-      focus(ref)
+      focus(ref) //asigna el elemento de formulario seleccionado
       {
         this.focused = ref;
       },
-      blured()
+      blured() //borra el elemento de formulario seleccionado si sale de foco
       {
         this.focused = null
       },
-      onDecode(result)
+      onDecode(result) //para el scanner, escribe el valor dentro del elemento seleccionado
       {
         this.focused.$refs.valor.value = result;
       },
-      assign(item,component)
+      assign(item,component) //ocurre cuando cambia un valor en el formulario
       {
-        switch(component)
+        switch(component) //agrega el valor a enviar a la API según qué componente emitió el evento
         {
           case this.$refs.serial:
             this.add.serial = item !== '' ? "&serial="+item : null;
@@ -93,9 +93,9 @@
             break;
         }
       },
-      agregar()
+      agregar() //ocurre al apretar el botón de "Agregar"
       {
-        let toadd = "";
+        let toadd = ""; //string para juntar los valores a enviar a la API
 
         Object.keys(this.add).forEach( key =>
           {
@@ -106,16 +106,17 @@
           }
         );
         if(!toadd.includes("&estado=")) toadd += "&estado=1";
+        //si no se cambia el estado, se asigna el estado con id=1 como predeterminado
 
         this.axios
           .get("http://192.168.88.246:80/stockapip/create.php?"+toadd+"&cual=equipo")
           .then(response => {
-            if(response.data === true)
+            if(response.data === true) //si se agregó el equipo con éxito
             {
               this.$refs.aviso.style = "color: green";
               this.$refs.aviso.innerText = "¡El equipo fue agregado con éxito!";
             }
-            else
+            else //sino, avisar que hubo un error
             {
               this.$refs.aviso.style = "color: red";
               this.$refs.aviso.innerText = "Hubo un error al agregar el equipo";
@@ -123,7 +124,7 @@
           })
           .catch(e => this.info = e);
       },
-      getCat()
+      getCat() //trae la lista de categorías
       {
         this.axios
           .get("http://192.168.88.246:80/stockapip/show.php?cual=categoria")
@@ -133,7 +134,7 @@
           })
           .catch(e => this.info = e);
       },
-      getMod()
+      getMod() //trae la lista de modelos
       {
         this.axios
           .get("http://192.168.88.246:80/stockapip/show.php?cual=modelo")
@@ -143,7 +144,7 @@
           })
           .catch(e => this.info = e);
       },
-      getEst()
+      getEst() //trae la lista de estados
       {
         this.axios
           .get("http://192.168.88.246:80/stockapip/show.php?cual=estado")

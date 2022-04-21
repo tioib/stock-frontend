@@ -60,14 +60,14 @@
       return {
         title: "EQUIPOS",
 
-        check: false,
+        check: false, //para ver si hay un campo de los filtros seleccionado
 
-        item: null,
-        direction: null,
+        item: null, //cual de las columnas de la tabla es la ordenada
+        direction: null, //ascendente o descendente
 
-        showModal: false,
+        showModal: false, //mostrar o no el modal de seleccion de equipo
 
-        single:
+        single: //datos dentro del modal
         {
           id: null,
           categoria: null,
@@ -81,25 +81,26 @@
           info: null,
         },
 
-        categorias: null,
-        modelos: null,
-        estados: null,
+        categorias: null, //lista de categorias para los filtros
+        modelos: null, //lista de modelos para los filtros
+        estados: null, //lista de estados para los filtros
 
-        info: null,
-        data: null,
-        status: null,
+        info: null, //por si hay errores
+        data: null, //elementos de la tabla
+        status: null, //estado HTTP
         list: ['ID','Número de serie','Categoría','Modelo','Abonado','MAC','Estado', 'Ult. fecha estado','Info adicional'],
+        //headers para la tabla
 
-        categoria: 0,
-        estado: 0,
-        modelo: 0,
-        mc: null,
-        abo: null,
-        ser: null,
+        categoria: 0, //categoria seleccionada
+        estado: 0, //estado seleccionado
+        modelo: 0, //modelo seleccionado
+        mc: null, //MAC ingresada
+        abo: null, //abonado ingresado
+        ser: null, //número de serie ingresado
 
-        sorted: null,
+        sorted: null, //para el ordenamiento de la tabla
 
-        add:
+        add: //para el filtrado y la edición de un equipo
         {
           categoria: null,
           estado: null,
@@ -114,17 +115,49 @@
     },
     methods:
     {
-      prefiltro(check)
+      prefiltro(check) //verifica si se seleccionó o no un campo de los filtros
       {
         this.check = check;
       },
       filtrar()
       {
-        if(this.check) this.filter()
+        if(this.check) this.filter() //si hay un campo seleccionado, filtra
       },
-      assingle(item,component)
+      filter() //traer resultados filtrados
       {
-        switch(component)
+        this.axios
+          .get("http://192.168.88.246:80/stockapip/filter.php?sort="+this.sorted+this.sorting())
+          .then(response => {
+            this.data = response.data;
+          })
+          .catch(e => this.info = e);
+      },
+      sorting() //junta los datos de los filtros para enviarlos como request http
+      {
+        let toadd = "";
+
+        Object.keys(this.add).forEach(
+          key =>
+          {
+            if(this.add[key] != null)
+            {
+              switch (key)
+              {
+                case "categoria": this.categoria = this.add[key]; toadd += "&categoria="+this.add[key]; break;
+                case "modelo": this.modelo = this.add[key]; toadd += "&modelo="+this.add[key]; break;
+                case "estado": this.estado = this.add[key]; toadd += "&estado="+this.add[key]; break;
+                case "abonado": this.abo = this.add[key]; toadd += "&abonado="+this.add[key]; break;
+                case "mac": this.mc = this.add[key]; toadd += "&mac="+this.add[key]; break;
+                case "serial": this.ser = this.add[key]; toadd += "&serial="+this.add[key]; break;
+              }
+            }
+          }
+        );
+        return toadd;
+      },
+      assingle(item,component) //ocurre si se cambia un dato en el modal, para editarlo
+      {
+        switch(component) //se cambia el valor a enviar según qué item del form se cambió
         {
           case this.$refs.serials:
              this.single.serial = item !== '' ? item : null;
@@ -155,9 +188,9 @@
             break;
         }
       },
-      assign(item,component)
+      assign(item,component) //cuando cambia un valor de los filtros
       {
-        switch(component)
+        switch(component) //se cambia el valor a filtrar según qué item de los filtros se cambió
         {
           case this.$refs.serial:
             this.add.serial = item !== '' ? item : null;
@@ -187,39 +220,7 @@
             break;
         }
       },
-      sorting()
-      {
-        let toadd = "";
-
-        Object.keys(this.add).forEach(
-          key =>
-          {
-            if(this.add[key] != null)
-            {
-              switch (key)
-              {
-                case "categoria": this.categoria = this.add[key]; toadd += "&categoria="+this.add[key]; break;
-                case "modelo": this.modelo = this.add[key]; toadd += "&modelo="+this.add[key]; break;
-                case "estado": this.estado = this.add[key]; toadd += "&estado="+this.add[key]; break;
-                case "abonado": this.abo = this.add[key]; toadd += "&abonado="+this.add[key]; break;
-                case "mac": this.mc = this.add[key]; toadd += "&mac="+this.add[key]; break;
-                case "serial": this.ser = this.add[key]; toadd += "&serial="+this.add[key]; break;
-              }
-            }
-          }
-        );
-        return toadd;
-      },
-      filter()
-      {
-        this.axios
-          .get("http://192.168.88.246:80/stockapip/filter.php?sort="+this.sorted+this.sorting())
-          .then(response => {
-            this.data = response.data;
-          })
-          .catch(e => this.info = e);
-      },
-      eliminar()
+      eliminar() //eliminar un equipo con el id
       {
         this.axios
           .get("http://192.168.88.246:80/stockapip/delete.php?id="+this.single.id+"&cual=equipo")
@@ -233,23 +234,23 @@
           .catch(e => this.info = e);
         this.showModal = false;
       },
-      editar()
+      editar() //editar un equipo con el id
       {
+        //primero verificar que los valores textuales no sean null, sino se cambia por string vacío
         this.single.abonado = this.single.abonado != null ? "&abonado="+this.single.abonado : '';
         this.single.mac = this.single.mac != null ? "&mac="+this.single.mac : '';
         this.single.info = this.single.info != null ? "&info="+this.single.info : '';
+        //luego recién se realiza el request
         this.axios
           .get("http://192.168.88.246:80/stockapip/update.php?id="+this.single.id+"&categoria="+this.single.id_categoria+"&modelo="+this.single.id_modelo+"&estado="+this.single.id_estado+"&serial="+this.single.serial+this.single.abonado+this.single.mac+this.single.info+"&cual=equipo")
           .then(response => {
             if (response.data)
-            {
               this.sort(this.item,this.direction);
-            }
           })
           .catch(e => this.info = e);
         this.showModal = false;
       },
-      getCat()
+      getCat() //trae la lista de categorías para los filtros
       {
         this.axios
           .get("http://192.168.88.246:80/stockapip/show.php?cual=categoria")
@@ -260,7 +261,7 @@
           })
           .catch(e => this.info = e);
       },
-      getMod()
+      getMod() //trae la lista de modelos para los filtros
       {
         this.axios
           .get("http://192.168.88.246:80/stockapip/show.php?cual=modelo")
@@ -271,7 +272,7 @@
           })
           .catch(e => this.info = e);
       },
-      getEst()
+      getEst() //trae la lista de estados para los filtros
       {
         this.axios
           .get("http://192.168.88.246:80/stockapip/show.php?cual=estado")
@@ -282,12 +283,12 @@
           })
           .catch(e => this.info = e);
       },
-      modal(key)
+      modal(key) //muestra o saca el modal
       {
         this.showModal = true;
         this.show(key)
       },
-      show(key)
+      show(key) //trae el equipo a mostrar en el modal
       {
         this.axios
           .get("http://192.168.88.246:80/stockapip/showsingle.php?id="+key+"&cual=equipo")
@@ -295,6 +296,7 @@
             this.single = response.data;
             Object.keys(this.single).forEach(key =>
             {
+              //porque algunos strings llegan con espacios al final
               if(this.single[key] != null)
               {
                 this.single[key] = this.single[key].trim();
@@ -302,18 +304,18 @@
             });
           })
           .catch(e => this.info = e);
-        if(this.showModal)
+        if(this.showModal) //para sacar la opcion de "todos" en las listas de cat/modelos/estados
         {
           this.categorias.pop({id: "0", descripcion: "Todas"});
           this.modelos.pop({id: "0", descripcion: "Todos"});
           this.estados.pop({id: "0", descripcion: "Todos"});
         }
       },
-      close()
+      close() //cerrar el modal
       {
         this.showModal = false;
       },
-      fetch()
+      fetch() //trae los datos de la tabla por primera vez
       {
         this.axios
           .get("http://192.168.88.246:80/stockapip/show.php?cual=equipo")
@@ -323,7 +325,7 @@
           })
           .catch(e => this.info = e);
       },
-      async sort(item,direction)
+      async sort(item,direction) //para ordenar la tabla segun el header que se cliquea
       {
         this.item = item; this.direction = direction;
 
@@ -379,9 +381,9 @@
     },
     watch:
     {
-      showModal(value)
+      showModal(value) //si cambia el valor del modal
       {
-        if(!value)
+        if(!value) //si el valor es false se agrega la opcion de nuevo de traer todas las cat/mod/es
         {
           this.categorias.push({id: "0", descripcion: "Todas"});
           this.modelos.push({id: "0", descripcion: "Todos"});

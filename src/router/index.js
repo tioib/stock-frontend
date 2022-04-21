@@ -3,7 +3,7 @@ import ListarEquipos from '../views/ListarEquipos.vue';
 import AgregarEquipos from '../views/AgregarEquipos.vue';
 import ClasifView from '@/views/ClasifView';
 
-
+//uso los nombres de las rutas para indicar en la API sobre qué elemento se está trabajando
 const routes = [
   {
     path: '/',
@@ -29,14 +29,6 @@ const routes = [
     path: '/m',
     name: 'modelo',
     component: ClasifView,
-  },
-  {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue'),
   },
 ];
 

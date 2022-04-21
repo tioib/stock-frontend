@@ -1,6 +1,6 @@
 <template>
 <div id="nav">
-  <div style="align">
+  <div>
   <DropdownMenu title="Equipos" :items="equipos"></DropdownMenu>
   <DropdownMenu title="Clasificaciones" :items="clasificaciones"></DropdownMenu>
   </div>
@@ -16,7 +16,6 @@
     data()
     {
       return{
-        title: String,
         equipos: [
           {title: "Listar", link:"/"},
           {title: "Agregar", link:"/a"}

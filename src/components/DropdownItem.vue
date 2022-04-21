@@ -4,8 +4,8 @@
 
 <script>
   export default {
-    name: 'DropdownItem',
-    props: ['title','link']
+    name: 'DropdownItem', //nombre del item dentro del menu de la barra de navegacion
+    props: ['title','link'] //el titulo del item y la ruta a la que lleva
   };
 </script>
 

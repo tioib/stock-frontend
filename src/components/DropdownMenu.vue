@@ -13,8 +13,8 @@
     name: 'DropdownMenu',
     props:
     {
-      items: Array,
-      title: String
+      items: Array, //elementos del menu
+      title: String //titulo del menu
     },
     components: {DropdownItem}
   };

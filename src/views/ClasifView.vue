@@ -54,24 +54,25 @@
     data()
     {
       return {
-        single: {id: null, descripcion: null},
+        single: {id: null, descripcion: null}, //para el modal si se cliquea en un item de la tabla
         title: String,
-        info: null,
-        data: null,
-        status: null,
-        list: ['ID','Descripción'],
-        showModal: false
+        info: null, //por si hay errores
+        data: null, //campos de la tabla
+        status: null, //respuesta de la peticion HTTP
+        list: ['ID','Descripción'], //headers de la tabla
+        showModal: false //para el modal, si está abierto o cerrado
       }
     },
     methods:
       {
-        sort(item,direction)
+        sort(item,direction) //si se hace clic en un header en la tabla se ordenan los campos
         {
+          //chequea en que header se hizo clic y si será ordenado ascendente o descendentemente
           let opcion = item === "ID" ? direction ? 0 : 1 : direction ? 2 : 3;
           this.axios.get("http://192.168.88.246:80/stockapip/sort.php?cual="+opcion+"&dir="+this.$route.name)
             .then(response => console.log(this.data = response.data));
         },
-        changeTitle()
+        changeTitle() //cambia el titulo segun la ruta
         {
           switch (this.$route.name)
           {
@@ -82,7 +83,7 @@
 
           this.$emit("title",this.title)
         },
-        show(key)
+        show(key) //si se hace clic en un elemento de la tabla, busca el elemento en la bbdd
         {
           this.axios
             .get("http://192.168.88.246:80/stockapip/showsingle.php?id="+key+"&cual="+this.$route.name)
@@ -93,20 +94,20 @@
             .catch(e => this.info = e);
           this.showModal = true;
         },
-        elim()
+        elim() //eliminar el elemento
         {
           this.$refs.modal.eliminar();
           this.showModal = false;
         },
-        agregar()
+        agregar() //agregar elemento
         {
           this.$refs.desc.agregarClas()
         },
-        editar()
+        editar() //editar el elemento
         {
           this.$refs.modal.editarClas();
         },
-        fetch()
+        fetch() //busca los valores de los elementos de la tabla
         {
           this.axios
             .get("http://192.168.88.246:80/stockapip/show.php?cual="+this.$route.name)
@@ -125,11 +126,11 @@
     },
     updated()
     {
-      this.changeTitle()
+      this.changeTitle() //cambia el título de la pestaña si se actualiza el componente
     },
     watch:
     {
-      $route(){this.fetch()},
+      $route(){this.fetch()}, //reinicia los datos de la tabla si se cambia de ruta
     }
   };
 </script>
