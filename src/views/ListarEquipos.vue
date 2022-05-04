@@ -37,6 +37,7 @@
       <div class="restrict" ><FormItem @prefiltro="prefiltro" @enter="filtrar" @agregar="assign" ref="mc" type="text" title="MAC" :item="mc"/></div>
       <button @click="filter" style="background-color: cyan;">Filtrar</button>
     </div>
+    <h4 style="margin-bottom: 0; text-align: left">Se encontraron {{total}} equipos</h4>
     <table style="margin-top: 1vh">
       <thead>
         <TableRow @sort="sort" :title="true" :items="list" />
@@ -51,6 +52,7 @@
 <script>
   import TableRow from '@/components/TableRow';
   import FormItem from '@/components/FormItem';
+  import {getAuth, onAuthStateChanged} from "firebase/auth";
 
   export default {
     components: {TableRow,FormItem},
@@ -85,6 +87,7 @@
         modelos: null, //lista de modelos para los filtros
         estados: null, //lista de estados para los filtros
 
+        total: null, //total de equipos encontrados
         info: null, //por si hay errores
         data: null, //elementos de la tabla
         status: null, //estado HTTP
@@ -129,6 +132,7 @@
           .get("http://192.168.88.246:80/stockapip/filter.php?sort="+this.sorted+this.sorting())
           .then(response => {
             this.data = response.data;
+            this.total = Object.keys(response.data).length;
           })
           .catch(e => this.info = e);
       },
@@ -322,6 +326,7 @@
           .then(response => {
             this.data = response.data;
             this.status = response.status;
+            this.total = Object.keys(response.data).length;
           })
           .catch(e => this.info = e);
       },
@@ -366,11 +371,20 @@
           .then(response =>
           {
             this.data = response.data;
+            this.total = Object.keys(response.data).length;
           });
+      },
+      auth()
+      {
+        onAuthStateChanged(getAuth(), (user) =>
+        {
+          if(!user) this.$router.replace({path: "/login"})
+        })
       }
     },
     mounted()
     {
+      this.auth();
       this.$emit("title",this.title);
 
       this.fetch();

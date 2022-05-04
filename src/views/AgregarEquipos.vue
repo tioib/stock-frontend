@@ -2,6 +2,7 @@
   <div class="form separate">
     <h2 style="text-align: center; margin: 0">EQUIPOS: Agregar</h2>
     <div >
+      <div class="restrict" ><FormItem @focused="focus" @blured="blured" @agregar="assign" ref="cantidad" title="Cantidad: *" type="number" /></div>
       <div class="restrict" ><FormItem @focused="focus" @blured="blured" @agregar="assign" ref="serial" title="Número de serie *" type="text" /></div>
       <div class="restrict" ><FormItem @agregar="assign" ref="categoria" title="Categoría *" type="select" :select="categorias" /></div>
       <div class="restrict" ><FormItem @agregar="assign" ref="modelo" title="Modelo *" type="select"  :select="modelos"/></div>
@@ -23,6 +24,7 @@
 <script>
   import FormItem from '@/components/FormItem';
   import { StreamBarcodeReader } from "vue-barcode-reader";
+  import { getAuth, onAuthStateChanged } from "firebase/auth";
 
   export default {
     components: {FormItem,StreamBarcodeReader},
@@ -36,6 +38,7 @@
 
         add: //el objeto a enviar en el llamado GET a la API
         {
+          cantidad: null,
           serial: null,
           categoria: null,
           modelo: null,
@@ -66,31 +69,44 @@
       },
       assign(item,component) //ocurre cuando cambia un valor en el formulario
       {
-        switch(component) //agrega el valor a enviar a la API según qué componente emitió el evento
+        if(component == this.$refs.cantidad && item < 1)
         {
-          case this.$refs.serial:
-            this.add.serial = item !== '' ? "&serial="+item : null;
-            break;
+          this.$refs.aviso.style = "color: red";
+          this.$refs.aviso.innerText = "La cantidad a agregar no puede ser menor a 1";
+        }
+        else
+        {
+          this.$refs.aviso.innerText = "";
+          switch(component) //agrega el valor a enviar a la API según qué componente emitió el evento
+          {
+            case this.$refs.cantidad:
+              this.add.cantidad = item !== '' ? "&cant="+item : null;
+              break;
 
-          case this.$refs.categoria:
-            this.add.categoria =  item !== '' ? "&categoria="+item : null;
-            break;
+            case this.$refs.serial:
+              this.add.serial = item !== '' ? "&serial="+item : null;
+              break;
 
-          case this.$refs.modelo:
-            this.add.modelo =  item !== '' ? "&modelo="+item : null;
-            break;
+            case this.$refs.categoria:
+              this.add.categoria =  item !== '' ? "&categoria="+item : null;
+              break;
 
-          case this.$refs.mc:
-            this.add.mac =  item !== '' ? "&mac="+item : null;
-            break;
+            case this.$refs.modelo:
+              this.add.modelo =  item !== '' ? "&modelo="+item : null;
+              break;
 
-          case this.$refs.info:
-            this.add.info =  item !== '' ? "&info="+item : null;
-            break;
+            case this.$refs.mc:
+              this.add.mac =  item !== '' ? "&mac="+item : null;
+              break;
 
-          case this.$refs.estado:
-            this.add.estado =  item !== '' ? "&estado="+item : null;
-            break;
+            case this.$refs.info:
+              this.add.info =  item !== '' ? "&info="+item : null;
+              break;
+
+            case this.$refs.estado:
+              this.add.estado =  item !== '' ? "&estado="+item : null;
+              break;
+          }
         }
       },
       agregar() //ocurre al apretar el botón de "Agregar"
@@ -111,15 +127,15 @@
         this.axios
           .get("http://192.168.88.246:80/stockapip/create.php?"+toadd+"&cual=equipo")
           .then(response => {
-            if(response.data === true) //si se agregó el equipo con éxito
+            if(response.data) //si se agregó el equipo con éxito
             {
               this.$refs.aviso.style = "color: green";
-              this.$refs.aviso.innerText = "¡El equipo fue agregado con éxito!";
+              this.$refs.aviso.innerText = "¡Los equipos se agregaron con éxito!";
             }
             else //sino, avisar que hubo un error
             {
               this.$refs.aviso.style = "color: red";
-              this.$refs.aviso.innerText = "Hubo un error al agregar el equipo";
+              this.$refs.aviso.innerText = "Hubo un error al agregar los equipos";
             }
           })
           .catch(e => this.info = e);
@@ -154,9 +170,17 @@
           })
           .catch(e => this.info = e);
       },
+      auth()
+      {
+        onAuthStateChanged(getAuth(), (user) =>
+        {
+          if(!user) this.$router.replace({path: "/login"})
+        })
+      }
     },
     mounted()
     {
+      this.auth();
       this.$emit("title",this.title);
 
       this.getCat();

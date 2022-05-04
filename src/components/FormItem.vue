@@ -1,7 +1,7 @@
 <template>
   <label v-if="title.includes('*')" :for="'i'+index"><strong>{{title}}</strong></label>
   <label v-else :for="'i'+index">{{title}}</label>
-  <input ref="valor" @keyup.enter="$emit('enter')" @focus="enfocus" @blur="enblur" v-if="type !== 'select'" :name="'i'+index" :id="'i'+index" :type="type" v-model="item">
+  <input ref="valor" @keyup.enter="$emit('enter')" @focus="enfocus" @blur="enblur" v-if="type !== 'select'" :name="'i'+index" :id="'i'+index" :type="type" v-model="item" min="1">
   <select v-else :name="'i'+index" :id="'i'+index" v-model="item">
     <template v-for="value in select">
       <option v-if="item === value.id" :value="value.id">{{value.descripcion}}</option>

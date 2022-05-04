@@ -42,6 +42,7 @@
 <script>
   import TableRow from '@/components/TableRow';
   import FormItem from '@/components/FormItem';
+  import {getAuth, onAuthStateChanged} from "firebase/auth";
 
   export default {
     components: {TableRow,FormItem},
@@ -117,10 +118,18 @@
               this.status = response.status;
             })
             .catch(e => this.info = e);
+        },
+        auth()
+        {
+          onAuthStateChanged(getAuth(), (user) =>
+          {
+            if(!user) this.$router.replace({path: "/login"})
+          })
         }
       },
     mounted()
     {
+      this.auth();
       this.changeTitle();
       this.fetch();
     },
