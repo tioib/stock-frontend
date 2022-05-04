@@ -3,15 +3,9 @@ import ListarEquipos from '../views/ListarEquipos.vue';
 import AgregarEquipos from '../views/AgregarEquipos.vue';
 import ClasifView from '@/views/ClasifView';
 import LoginView from '@/views/LoginView';
-import Logout from '@/views/Logout';
 
 //uso los nombres de las rutas para indicar en la API sobre qué elemento se está trabajando
 const routes = [
-  {
-    path: '/logout',
-    name: 'logout',
-    component: Logout,
-  },
   {
     path: '/',
     name: 'equipo',
