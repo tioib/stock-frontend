@@ -3,6 +3,7 @@
   <div>
   <DropdownMenu title="Equipos" :items="equipos"></DropdownMenu>
   <DropdownMenu title="Clasificaciones" :items="clasificaciones"></DropdownMenu>
+  <DropdownMenu title="Cerrar sesión" @click="logout"></DropdownMenu>
   </div>
 </div>
 
@@ -10,6 +11,7 @@
 
 <script>
   import DropdownMenu from '@/components/DropdownMenu';
+  import { getAuth } from "firebase/auth";
   export default {
     name: 'Navbar',
     components: {DropdownMenu},
@@ -25,6 +27,14 @@
           {title: "Modelos", link:"/m"},
           {title: "Estados", link:"/e"}
         ]
+      }
+    },
+    methods:
+    {
+      logout()
+      {
+        getAuth().signOut();
+        this.$router.replace({path: "/login"})
       }
     }
   };

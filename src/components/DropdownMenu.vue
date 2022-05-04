@@ -1,6 +1,7 @@
 <template>
   <div id="dropdown">
-    <button id="dropbtn">{{title}}</button>
+    <button v-if="title!='Cerrar sesión'" id="dropbtn">{{title}}</button>
+    <button v-else  id="cs">{{title}}</button>
     <div id="dropcont">
       <DropdownItem v-for="value in items" :title="value.title" :link="value.link" />
     </div>
@@ -29,6 +30,14 @@
     font-size: 16px;
     border: 1px solid grey;
   }
+  #cs
+  {
+    background-color: red;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: 1px solid grey;
+  }
 
   #dropcont
   {
@@ -49,4 +58,5 @@
   #dropdown:hover #dropcont {display: block}
 
   #dropdown:hover #dropbtn {background-color: rgb(213,132,50)}
+  #cs:hover {cursor: pointer}
 </style>

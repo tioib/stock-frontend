@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-on:keyup.enter="login">
       <FormItem @agregar="assign" ref="usr" title="Usuario:" type="text" />
       <FormItem @agregar="assign" ref="pwd" title="Contraseña:" type="password" />
       <button @click="login">Login</button>
@@ -10,7 +10,9 @@
 <script>
     import FormItem from '@/components/FormItem';
     import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-
+    window.addEventListener('keyup', function(ev) {
+      if(ev.key === "Enter") this.login(); // declared in your component methods
+    });
     export default {
         name: "LoginView",
         components: {FormItem},
@@ -29,7 +31,7 @@
               switch (error.code)
               {
                 case "auth/user-not-found": this.error = "No se encontró el usuario"; break;
-                case 'auth/user-not-found': this.error = 'Contraseña incorrecta'; break;
+                case 'auth/wrong-password': this.error = 'Contraseña incorrecta'; break;
                 default: this.error = "Email o contraseña incorrecta";
               }
               console.log(error)
@@ -49,7 +51,6 @@
             }
           },
         }
-
     }
 </script>
 
