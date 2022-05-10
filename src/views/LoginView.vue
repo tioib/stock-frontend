@@ -22,7 +22,7 @@
         },
         methods:
         {
-          login() //ocurre cuando cambia un valor en el formulario
+          login()
           {
             signInWithEmailAndPassword(getAuth(), this.usuario, this.contraseña)
             .then((data) => this.$router.replace({path: "/"}))

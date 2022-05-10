@@ -1,13 +1,19 @@
 <template>
   <tr class="row">
-      <th @click="sort" v-if="title" ref="itemsH" v-for="item in items">
-        {{item}}
-        <template v-if="item == sorted">
-          <template v-if="direction">⬆</template>
-          <template v-else>⬇</template>
-        </template>
-      </th>
-      <td v-else ref="itemsD" v-for="item in items">{{item}}</td>
+      <template v-if="title">
+        <template v-if="select"><th>Sel.</th></template>
+        <th @click="sort"  ref="itemsH" v-for="item in items">
+          {{item}}
+          <template v-if="item == sorted">
+            <template v-if="direction">⬆</template>
+            <template v-else>⬇</template>
+          </template>
+        </th>
+      </template>
+      <template v-else>
+        <template v-if="select"><td><input @click="sel" type="checkbox" ref="checkbox"></td></template>
+        <td @click="$emit('single')" class="item" ref="itemsD" v-for="item in items">{{item}}</td>
+      </template>
   </tr>
 </template>
 
@@ -17,6 +23,7 @@
     data()
     {
       return{
+        select: this.$route.name == "equipo",
         sorted: null, //nombre de la columna ordenada
         direction: true, //ascendente o desc
       }
@@ -34,6 +41,11 @@
     },
     methods:
     {
+      sel()
+      {
+        if(this.$refs.checkbox.checked) this.$emit('select');
+        else this.$emit('unselect')
+      },
       sort(event) //cuando se hace clic en un header se ordena esa columna
       {
         //si se hizo clic en la columna ya ordenada se cambia de dirección
@@ -62,10 +74,11 @@
     background-color: #42b983;
   }
 
-  .row:hover td
+  .row:hover .item
   {
     cursor: pointer;
     background-color: beige;
   }
+
 
 </style>

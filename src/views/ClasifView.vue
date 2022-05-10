@@ -107,6 +107,7 @@
         editar() //editar el elemento
         {
           this.$refs.modal.editarClas();
+          this.showModal = false;
         },
         fetch() //busca los valores de los elementos de la tabla
         {

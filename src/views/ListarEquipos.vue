@@ -1,8 +1,29 @@
 <template>
+  <vue-final-modal  :esc-to-close="true" v-model="showSelect">
+    <div class="form separate" style="background-color: black; color: white">
+      <div style="display: flex; align-items: center; flex-direction: column">
+        <span @click="showSelect = false" class="x" style="color: red">X</span>
+      </div>
+      <hr>
+      <div>
+        <div class="restrict" ><FormItem @agregar="assingle" ref="cat" title="Categoría" type="select" :item="single.id_categoria" :select="categorias" /></div>
+        <div class="restrict" ><FormItem @agregar="assingle" ref="mode" title="Modelo" type="select" :item="single.id_modelo" :select="modelos"/></div>
+        <div class="restrict" ><FormItem @agregar="assingle" ref="est" title="Estado" type="select" :item="single.id_estado" :select="estados"/></div>
+        <div class="restrict" ><FormItem @agregar="assingle" ref="abo" title="Abonado" type="text" :item="single.abonado" /></div>
+        <div class="restrict" ><FormItem @agregar="assingle" ref="inf" title="Info adicional" type="text" :item="single.info" /></div>
+        <div class="buttoncontain">
+          <div style="flex-direction: row">
+            <button @click="editarS" style="background-color: lightblue; color: white">Editar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </vue-final-modal>
+
   <vue-final-modal :esc-to-close="true" v-model="showModal">
     <div class="form separate" style="background-color: black; color: white">
       <div style="display: flex; align-items: center; flex-direction: column">
-        <span @click="close" id="x" style="color: red">X</span>
+        <span @click="close" class="x" style="color: red">X</span>
         <span class="modal__title">ID: {{single.id}}</span>
       </div>
       <hr>
@@ -37,15 +58,25 @@
       <div class="restrict" ><FormItem @prefiltro="prefiltro" @enter="filtrar" @agregar="assign" ref="mc" type="text" title="MAC" :item="mc"/></div>
       <button @click="filter" style="background-color: cyan;">Filtrar</button>
     </div>
-    <h4 style="margin-bottom: 0; text-align: left">Se encontraron {{total}} equipos</h4>
+
+    <h4 style="text-align: left">Se encontraron {{total}} equipos</h4>
+
     <table style="margin-top: 1vh">
       <thead>
         <TableRow @sort="sort" :title="true" :items="list" />
       </thead>
       <tbody>
-        <TableRow @click="modal(value.id)" v-for="value in data" :title="false" :items="value"/>
+        <TableRow @unselect="sacar(value.id)" @select="agregar(value.id)" @single="modal(value.id)" v-for="value in data" :title="false" :items="value"/>
       </tbody>
     </table>
+  </div>
+
+  <div id="footer">
+    <div style="text-align: left">
+      <h4 style="margin: 0; text-align: left">Selección: <template v-for="item in seleccion">{{item}}, </template> ({{seleccion.length}})</h4>
+      <button @click="showSelect = true" style="background-color: lightblue; color: white">Editar</button>
+      <button @click="eliminarS" style="background-color: red; color: white">Eliminar</button>
+    </div>
   </div>
 </template>
 
@@ -53,6 +84,10 @@
   import TableRow from '@/components/TableRow';
   import FormItem from '@/components/FormItem';
   import {getAuth, onAuthStateChanged} from "firebase/auth";
+
+  window.addEventListener('keyup', function(ev) {
+    if(ev.key === "Delete") this.eliminarS(); // declared in your component methods
+  });
 
   export default {
     components: {TableRow,FormItem},
@@ -68,6 +103,7 @@
         direction: null, //ascendente o descendente
 
         showModal: false, //mostrar o no el modal de seleccion de equipo
+        showSelect: false,
 
         single: //datos dentro del modal
         {
@@ -112,12 +148,23 @@
           abonado: null,
           mac: null,
           url: null,
-        }
+        },
 
+        seleccion: [],
+        all: [],
+        allSelected: false
       }
     },
     methods:
     {
+      agregar(id)
+      {
+        if(!this.seleccion.includes(id)) this.seleccion.push(id)
+      },
+      sacar(id)
+      {
+        if(this.seleccion.includes(id)) this.seleccion.splice(this.seleccion.indexOf(id),1);
+      },
       prefiltro(check) //verifica si se seleccionó o no un campo de los filtros
       {
         this.check = check;
@@ -128,6 +175,7 @@
       },
       filter() //traer resultados filtrados
       {
+        this.all = [];
         this.axios
           .get("http://192.168.88.246:80/stockapip/filter.php?sort="+this.sorted+this.sorting())
           .then(response => {
@@ -168,10 +216,12 @@
             break;
 
           case this.$refs.categorias:
+          case this.$refs.cat:
             this.single.id_categoria =  item !== '' ? item : null;
             break;
 
           case this.$refs.modelos:
+          case this.$refs.mode:
             this.single.id_modelo =  item !== '' ? item : null;
             break;
 
@@ -180,14 +230,17 @@
             break;
 
           case this.$refs.abonados:
+          case this.$refs.abo:
             this.single.abonado =  item !== '' ? item : null;
             break;
 
           case this.$refs.estados:
+          case this.$refs.est:
             this.single.id_estado =  item !== '' ? item : null;
             break;
 
           case this.$refs.info:
+          case this.$refs.inf:
             this.single.info =  item !== '' ? item : null;
             break;
         }
@@ -238,6 +291,17 @@
           .catch(e => this.info = e);
         this.showModal = false;
       },
+      async eliminarS()
+      {
+        if( window.confirm("¿Quiere eliminar los "+this.seleccion.length+" equipos seleccionados?"))
+        for (let id of this.seleccion)
+        {
+          await this.axios
+            .get("http://192.168.88.246:80/stockapip/delete.php?id="+id+"&cual=equipo")
+            .catch(e => this.info = e);
+        }
+        window.location.reload(true);
+      },
       editar() //editar un equipo con el id
       {
         //primero verificar que los valores textuales no sean null, sino se cambia por string vacío
@@ -253,6 +317,25 @@
           })
           .catch(e => this.info = e);
         this.showModal = false;
+      },
+      async editarS() //editar un equipo con el id
+      {
+        for (let id of this.seleccion)
+        {
+          //primero verificar que los valores no sean null, sino se cambia por string vacío
+          this.single.abonado = this.single.abonado != null ? "&abonado="+this.single.categoria : '';
+          this.single.id_categoria = this.single.id_categoria != null ? "&categoria="+this.single.id_categoria : '';
+          this.single.id_modelo = this.single.id_modelo != null ? "&modelo="+this.single.id_modelo : '';
+          this.single.id_estado = this.single.id_estado != null ? "&estado="+this.single.id_estado : '';
+          this.single.info = this.single.info != null ? "&info="+this.single.info : '';
+
+          //luego recién se realiza el request
+          await this.axios
+            .get("http://192.168.88.246:80/stockapip/update.php?id="+id+this.single.id_categoria+this.single.id_modelo+this.single.id_estado+this.single.abonado+this.single.info+"&cual=equipo")
+            .catch(e => this.info = e);
+        }
+        this.sort(this.item,this.direction);
+        this.showSelect = false;
       },
       getCat() //trae la lista de categorías para los filtros
       {
@@ -308,12 +391,6 @@
             });
           })
           .catch(e => this.info = e);
-        if(this.showModal) //para sacar la opcion de "todos" en las listas de cat/modelos/estados
-        {
-          this.categorias.pop({id: "0", descripcion: "Todas"});
-          this.modelos.pop({id: "0", descripcion: "Todos"});
-          this.estados.pop({id: "0", descripcion: "Todos"});
-        }
       },
       close() //cerrar el modal
       {
@@ -332,6 +409,7 @@
       },
       async sort(item,direction) //para ordenar la tabla segun el header que se cliquea
       {
+        this.all = [];
         this.item = item; this.direction = direction;
 
         let opcion = 0;
@@ -397,7 +475,40 @@
     {
       showModal(value) //si cambia el valor del modal
       {
-        if(!value) //si el valor es false se agrega la opcion de nuevo de traer todas las cat/mod/es
+        if(value) //para sacar la opcion de "todos" en las listas de cat/modelos/estados
+        {
+          this.categorias.pop({id: "0", descripcion: "Todas"});
+          this.modelos.pop({id: "0", descripcion: "Todos"});
+          this.estados.pop({id: "0", descripcion: "Todos"});
+        }
+        else //si el valor es false se agrega la opcion de nuevo de traer todas las cat/mod/es
+        {
+          this.categorias.push({id: "0", descripcion: "Todas"});
+          this.modelos.push({id: "0", descripcion: "Todos"});
+          this.estados.push({id: "0", descripcion: "Todos"});
+        }
+        this.single = {
+          id: null,
+          categoria: null,
+          modelo: null,
+          abonado: null,
+          id_modelo: null,
+          id_categoria: null,
+          mac: null,
+          estado: null,
+          id_estado: null,
+          info: null,
+        }
+      },
+      showSelect(value) //si cambia el valor del modal
+      {
+        if(value) //para sacar la opcion de "todos" en las listas de cat/modelos/estados
+        {
+          this.categorias.pop({id: "0", descripcion: "Todas"});
+          this.modelos.pop({id: "0", descripcion: "Todos"});
+          this.estados.pop({id: "0", descripcion: "Todos"});
+        }
+        else //si el valor es false se agrega la opcion de nuevo de traer todas las cat/mod/es
         {
           this.categorias.push({id: "0", descripcion: "Todas"});
           this.modelos.push({id: "0", descripcion: "Todos"});
@@ -409,7 +520,18 @@
 </script>
 
 <style scoped>
-  #x:hover
+  #footer
+  {
+    padding: 1vw;
+    background-color: rgb(213,132,50);
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .x:hover
   {
     cursor: pointer;
   }
