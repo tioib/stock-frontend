@@ -61,7 +61,7 @@
 
     <h4 style="text-align: left">Se encontraron {{total}} equipos</h4>
 
-    <table style="margin-top: 1vh">
+    <table style="margin-top: 1vh; margin-bottom: 20vh">
       <thead>
         <TableRow @sort="sort" :title="true" :items="list" />
       </thead>
@@ -305,9 +305,9 @@
       editar() //editar un equipo con el id
       {
         //primero verificar que los valores textuales no sean null, sino se cambia por string vacío
-        this.single.abonado = this.single.abonado != null ? "&abonado="+this.single.abonado : '';
-        this.single.mac = this.single.mac != null ? "&mac="+this.single.mac : '';
-        this.single.info = this.single.info != null ? "&info="+this.single.info : '';
+        this.single.abonado = this.single.abonado != null ? "&abonado="+this.single.abonado : ' ';
+        this.single.mac = this.single.mac != null ? "&mac="+this.single.mac : ' ';
+        this.single.info = this.single.info != null ? "&info="+this.single.info : ' ';
         //luego recién se realiza el request
         this.axios
           .get("http://192.168.88.246:80/stockapip/update.php?id="+this.single.id+"&categoria="+this.single.id_categoria+"&modelo="+this.single.id_modelo+"&estado="+this.single.id_estado+"&serial="+this.single.serial+this.single.abonado+this.single.mac+this.single.info+"&cual=equipo")
@@ -323,11 +323,11 @@
         for (let id of this.seleccion)
         {
           //primero verificar que los valores no sean null, sino se cambia por string vacío
-          this.single.abonado = this.single.abonado != null ? "&abonado="+this.single.categoria : '';
+          this.single.abonado = this.single.abonado != null ? "&abonado="+this.single.abonado : ' ';
           this.single.id_categoria = this.single.id_categoria != null ? "&categoria="+this.single.id_categoria : '';
           this.single.id_modelo = this.single.id_modelo != null ? "&modelo="+this.single.id_modelo : '';
           this.single.id_estado = this.single.id_estado != null ? "&estado="+this.single.id_estado : '';
-          this.single.info = this.single.info != null ? "&info="+this.single.info : '';
+          this.single.info = this.single.info != null ? "&info="+this.single.info : ' ';
 
           //luego recién se realiza el request
           await this.axios
@@ -336,6 +336,12 @@
         }
         this.sort(this.item,this.direction);
         this.showSelect = false;
+
+        this.single.abonado = null;
+        this.single.id_categoria = null;
+        this.single.id_modelo = null;
+        this.single.id_estado = null;
+        this.single.info = null;
       },
       getCat() //trae la lista de categorías para los filtros
       {
