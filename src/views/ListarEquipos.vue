@@ -335,13 +335,14 @@
             .catch(e => this.info = e);
         }
         this.sort(this.item,this.direction);
-        this.showSelect = false;
 
-        this.single.abonado = null;
+        this.single.abonado =  ' ';
         this.single.id_categoria = null;
         this.single.id_modelo = null;
         this.single.id_estado = null;
-        this.single.info = null;
+        this.single.info = ' ';
+
+        this.showSelect = false;
       },
       getCat() //trae la lista de categorías para los filtros
       {
