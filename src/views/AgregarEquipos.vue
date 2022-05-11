@@ -125,7 +125,7 @@
         //si no se cambia el estado, se asigna el estado con id=1 como predeterminado
 
         this.axios
-          .get("http://192.168.88.246:80/stockapip/create.php?"+toadd+"&cual=equipo")
+          .get("http://192.168.200.114:80/stockapip/create.php?"+toadd+"&cual=equipo")
           .then(response => {
             if(response.data) //si se agregó el equipo con éxito
             {
@@ -143,7 +143,7 @@
       getCat() //trae la lista de categorías
       {
         this.axios
-          .get("http://192.168.88.246:80/stockapip/show.php?cual=categoria")
+          .get("http://192.168.200.114:80/stockapip/show.php?cual=categoria")
           .then(response =>
           {
             this.categorias = response.data;
@@ -153,7 +153,7 @@
       getMod() //trae la lista de modelos
       {
         this.axios
-          .get("http://192.168.88.246:80/stockapip/show.php?cual=modelo")
+          .get("http://192.168.200.114:80/stockapip/show.php?cual=modelo")
           .then(response =>
           {
             this.modelos = response.data;
@@ -163,7 +163,7 @@
       getEst() //trae la lista de estados
       {
         this.axios
-          .get("http://192.168.88.246:80/stockapip/show.php?cual=estado")
+          .get("http://192.168.200.114:80/stockapip/show.php?cual=estado")
           .then(response =>
           {
             this.estados = response.data;

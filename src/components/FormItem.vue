@@ -51,13 +51,13 @@
       agregarClas() //agregar categoria, estado o modelo
       {
         this.axios
-          .get("http://192.168.88.246:80/stockapip/create.php?descripcion="+this.item+"&cual="+this.$route.name)
+          .get("http://192.168.200.114:80/stockapip/create.php?descripcion="+this.item+"&cual="+this.$route.name)
           .catch(e => this.info = e);
       },
       eliminar() //eliminar categoria, estado o modelo
       {
         this.axios
-          .get("http://192.168.88.246:80/stockapip/find.php?cual="+this.$route.name+"&id="+this.index)
+          .get("http://192.168.200.114:80/stockapip/find.php?cual="+this.$route.name+"&id="+this.index)
           .then(response =>
           {
             let flag; //para ver si hay campos en la tabla de equipos con esa cat./estado/modelo
@@ -67,7 +67,7 @@
             if(flag)
             {
               this.axios
-                .get("http://192.168.88.246:80/stockapip/delete.php?id="+this.index+"&cual="+this.$route.name)
+                .get("http://192.168.200.114:80/stockapip/delete.php?id="+this.index+"&cual="+this.$route.name)
                 .then(() => {
                   location.reload();
                 })
@@ -79,7 +79,7 @@
       editarClas() //editar categoria, estado o modelo
       {
         this.axios
-          .get("http://192.168.88.246:80/stockapip/update.php?id="+this.index+"&descripcion="+this.item+"&cual="+this.$route.name)
+          .get("http://192.168.200.114:80/stockapip/update.php?id="+this.index+"&descripcion="+this.item+"&cual="+this.$route.name)
           .catch(e => this.info = e);
       },
     },

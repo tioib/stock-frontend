@@ -70,7 +70,7 @@
         {
           //chequea en que header se hizo clic y si será ordenado ascendente o descendentemente
           let opcion = item === "ID" ? direction ? 0 : 1 : direction ? 2 : 3;
-          this.axios.get("http://192.168.88.246:80/stockapip/sort.php?cual="+opcion+"&dir="+this.$route.name)
+          this.axios.get("http://192.168.200.114:80/stockapip/sort.php?cual="+opcion+"&dir="+this.$route.name)
             .then(response => console.log(this.data = response.data));
         },
         changeTitle() //cambia el titulo segun la ruta
@@ -87,7 +87,7 @@
         show(key) //si se hace clic en un elemento de la tabla, busca el elemento en la bbdd
         {
           this.axios
-            .get("http://192.168.88.246:80/stockapip/showsingle.php?id="+key+"&cual="+this.$route.name)
+            .get("http://192.168.200.114:80/stockapip/showsingle.php?id="+key+"&cual="+this.$route.name)
             .then(response => {
               this.single = response.data;
               this.status = response.status;
@@ -112,7 +112,7 @@
         fetch() //busca los valores de los elementos de la tabla
         {
           this.axios
-            .get("http://192.168.88.246:80/stockapip/show.php?cual="+this.$route.name)
+            .get("http://192.168.200.114:80/stockapip/show.php?cual="+this.$route.name)
             .then(response =>
             {
               this.data = response.data;

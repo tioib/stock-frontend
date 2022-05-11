@@ -177,7 +177,7 @@
       {
         this.all = [];
         this.axios
-          .get("http://192.168.88.246:80/stockapip/filter.php?sort="+this.sorted+this.sorting())
+          .get("http://192.168.200.114:80/stockapip/filter.php?sort="+this.sorted+this.sorting())
           .then(response => {
             this.data = response.data;
             this.total = Object.keys(response.data).length;
@@ -280,7 +280,7 @@
       eliminar() //eliminar un equipo con el id
       {
         this.axios
-          .get("http://192.168.88.246:80/stockapip/delete.php?id="+this.single.id+"&cual=equipo")
+          .get("http://192.168.200.114:80/stockapip/delete.php?id="+this.single.id+"&cual=equipo")
           .then(response =>
           {
             if(response.data)
@@ -297,7 +297,7 @@
         for (let id of this.seleccion)
         {
           await this.axios
-            .get("http://192.168.88.246:80/stockapip/delete.php?id="+id+"&cual=equipo")
+            .get("http://192.168.200.114:80/stockapip/delete.php?id="+id+"&cual=equipo")
             .catch(e => this.info = e);
         }
         window.location.reload(true);
@@ -310,7 +310,7 @@
         this.single.info = this.single.info != null ? "&info="+this.single.info : ' ';
         //luego recién se realiza el request
         this.axios
-          .get("http://192.168.88.246:80/stockapip/update.php?id="+this.single.id+"&categoria="+this.single.id_categoria+"&modelo="+this.single.id_modelo+"&estado="+this.single.id_estado+"&serial="+this.single.serial+this.single.abonado+this.single.mac+this.single.info+"&cual=equipo")
+          .get("http://192.168.200.114:80/stockapip/update.php?id="+this.single.id+"&categoria="+this.single.id_categoria+"&modelo="+this.single.id_modelo+"&estado="+this.single.id_estado+"&serial="+this.single.serial+this.single.abonado+this.single.mac+this.single.info+"&cual=equipo")
           .then(response => {
             if (response.data)
               this.sort(this.item,this.direction);
@@ -331,7 +331,7 @@
 
           //luego recién se realiza el request
           await this.axios
-            .get("http://192.168.88.246:80/stockapip/update.php?id="+id+this.single.id_categoria+this.single.id_modelo+this.single.id_estado+this.single.abonado+this.single.info+"&cual=equipo")
+            .get("http://192.168.200.114:80/stockapip/update.php?id="+id+this.single.id_categoria+this.single.id_modelo+this.single.id_estado+this.single.abonado+this.single.info+"&cual=equipo")
             .catch(e => this.info = e);
         }
         this.sort(this.item,this.direction);
@@ -347,7 +347,7 @@
       getCat() //trae la lista de categorías para los filtros
       {
         this.axios
-          .get("http://192.168.88.246:80/stockapip/show.php?cual=categoria")
+          .get("http://192.168.200.114:80/stockapip/show.php?cual=categoria")
           .then(response =>
           {
             this.categorias = response.data;
@@ -358,7 +358,7 @@
       getMod() //trae la lista de modelos para los filtros
       {
         this.axios
-          .get("http://192.168.88.246:80/stockapip/show.php?cual=modelo")
+          .get("http://192.168.200.114:80/stockapip/show.php?cual=modelo")
           .then(response =>
           {
             this.modelos = response.data;
@@ -369,7 +369,7 @@
       getEst() //trae la lista de estados para los filtros
       {
         this.axios
-          .get("http://192.168.88.246:80/stockapip/show.php?cual=estado")
+          .get("http://192.168.200.114:80/stockapip/show.php?cual=estado")
           .then(response =>
           {
             this.estados = response.data;
@@ -385,7 +385,7 @@
       show(key) //trae el equipo a mostrar en el modal
       {
         this.axios
-          .get("http://192.168.88.246:80/stockapip/showsingle.php?id="+key+"&cual=equipo")
+          .get("http://192.168.200.114:80/stockapip/showsingle.php?id="+key+"&cual=equipo")
           .then(response => {
             this.single = response.data;
             Object.keys(this.single).forEach(key =>
@@ -406,7 +406,7 @@
       fetch() //trae los datos de la tabla por primera vez
       {
         this.axios
-          .get("http://192.168.88.246:80/stockapip/show.php?cual=equipo")
+          .get("http://192.168.200.114:80/stockapip/show.php?cual=equipo")
           .then(response => {
             this.data = response.data;
             this.status = response.status;
@@ -452,7 +452,7 @@
             break;
         }
         this.sorted = opcion;
-        await this.axios.get("http://192.168.88.246:80/stockapip/sort.php?cual="+opcion+"&dir=equipo"+this.sorting())
+        await this.axios.get("http://192.168.200.114:80/stockapip/sort.php?cual="+opcion+"&dir=equipo"+this.sorting())
           .then(response =>
           {
             this.data = response.data;
